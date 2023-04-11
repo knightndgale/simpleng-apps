@@ -26,3 +26,9 @@ You can check out the [create-t3-app GitHub repository](https://github.com/t3-os
 ## How do I deploy this?
 
 Follow our deployment guides for [Vercel](https://create.t3.gg/en/deployment/vercel), [Netlify](https://create.t3.gg/en/deployment/netlify) and [Docker](https://create.t3.gg/en/deployment/docker) for more information.
+
+## Important
+
+- Everytime you push a prisma schema you need to restart the typescript server otherwise it wont look for the new generated type in your node modules. This should solve the problem if it's the latter.
+
+- Restarting the TS server in vscode is done by opening the command palette (CMD+SHIFT+P) and search for "restart" and select the restart typescript option.
