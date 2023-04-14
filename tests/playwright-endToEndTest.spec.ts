@@ -1,6 +1,8 @@
 import { test, expect } from "@playwright/test";
 
-test("test", async ({ page }) => {
+test("Should be able to login, create new topic, new note title, and new note text twice and then log out", async ({
+  page,
+}) => {
   await page.goto("http://localhost:3000/");
   await page.getByRole("button", { name: "Sign in" }).click();
   await page.getByRole("button", { name: "Sign in with GitHub" }).click();
