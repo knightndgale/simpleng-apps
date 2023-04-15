@@ -4,34 +4,36 @@ import React, { useCallback, useState } from "react";
 import { MagnifyingGlassIcon } from "@heroicons/react/24/solid";
 import { useSession } from "next-auth/react";
 import { type User } from "@prisma/client";
-
+import { useDispatch, useSelector } from "react-redux";
 import { api } from "~/utils/api";
+import { type RootState } from "~/store/root.store";
+
+import { setRobots, searchRobots } from "~/reducers/robofriends.reducer";
 
 export type UserWithoutEmail = Omit<User, "email">;
 const Robofriends = () => {
+  const dispatch = useDispatch();
+  const robots = useSelector((state: RootState) => state.robofriends.robots);
   const { data: sessionData, status: sessionStatus } = useSession();
-  const [users, setUsers] = useState<UserWithoutEmail[]>([]);
   const [userSearch, setUserSearch] = useState("");
 
-  const { data: userData } = api.user.getAll.useQuery(undefined, {
+  const { data: robotData } = api.user.getAll.useQuery(undefined, {
     enabled: sessionStatus === "authenticated" && !userSearch,
     onSuccess: (data: UserWithoutEmail[]) => {
-      if (!userSearch) setUsers(data);
+      if (!userSearch) {
+        dispatch(setRobots(data));
+      }
     },
   });
 
   const handleSearchChange = useCallback(
     ({ target }: React.ChangeEvent<HTMLInputElement>) => {
       setUserSearch(target.value);
-      if (target.value) {
-        const newUsers = (userData || []).filter((user) =>
-          user.name?.toLowerCase().includes(target.value.toLowerCase())
-        );
-        return setUsers(newUsers);
-      }
-      setUsers(userData || []);
+      dispatch(setRobots(robotData || []));
+      if (target.value) dispatch(searchRobots(target.value));
     },
-    [userData]
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [robotData]
   );
 
   return (
@@ -82,8 +84,8 @@ const Robofriends = () => {
       </div>
 
       <div className="col-span-3 flex max-h-screen flex-wrap  gap-3  overflow-y-auto p-5  ">
-        {users.length > 0
-          ? users.map((user, index) => (
+        {robots.length > 0 && sessionStatus === "authenticated"
+          ? robots.map((robot, index) => (
               <div
                 key={`robocards-${index}`}
                 className="h-75 card w-60 rounded-lg bg-secondary shadow-lg transition ease-in-out hover:-translate-y-1  hover:scale-105"
@@ -96,14 +98,14 @@ const Robofriends = () => {
                       // style={{ backgroundColor: randomColor() }}
                     >
                       <img
-                        src={`https://robohash.org/${user.name}`}
-                        alt={user.name || "robofriend-friend"}
+                        src={`https://robohash.org/${robot.name}`}
+                        alt={robot.name || "robofriend-friend"}
                       />
                     </div>
                   </div>
                 </figure>
                 <div className="card-body items-center text-center">
-                  <h2 className="card-title">{user.name}</h2>
+                  <h2 className="card-title">{robot.name}</h2>
                 </div>
               </div>
             ))
