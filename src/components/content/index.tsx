@@ -1,106 +1,36 @@
-import { useSession } from "next-auth/react";
-import { type RouterOutputs, api } from "../../utils/api";
-import { useState } from "react";
-import NoteEditor from "../noteEditor";
-import NoteCard from "../noteCard";
-type Topic = RouterOutputs["topic"]["getAll"][0];
+import { useRouter } from "next/router";
 
 const Content: React.FC = () => {
-  const { data: sessionData } = useSession();
-
-  const [selectedTopic, setSelectedTopic] = useState<Topic | null>(null);
-
-  const { data: topics, refetch: refetchTopics } = api.topic.getAll.useQuery(
-    undefined, // no input
-    {
-      enabled: sessionData?.user !== undefined,
-      onSuccess: (data) => {
-        setSelectedTopic(selectedTopic ?? data[0] ?? null);
-      },
-    }
-  );
-
-  const createTopic = api.topic.create.useMutation({
-    onSuccess: () => {
-      void refetchTopics();
-    },
-  });
-
-  const { data: notes, refetch: refetchNotes } = api.note.getAll.useQuery(
-    {
-      topicId: selectedTopic?.id ?? "",
-    },
-    {
-      enabled: sessionData?.user !== undefined && selectedTopic !== null,
-    }
-  );
-
-  const createNote = api.note.create.useMutation({
-    onSuccess: () => {
-      void refetchNotes();
-    },
-  });
-
-  const deleteNote = api.note.delete.useMutation({
-    onSuccess: () => {
-      void refetchNotes();
-    },
-  });
-
+  const router = useRouter();
   return (
-    <div className="mx-5 mt-5 grid grid-cols-4 gap-2">
-      <div className="px-2">
-        <ul className="w-100 menu rounded-box bg-base-100 p-2">
-          {topics?.map((topic) => (
-            <li key={topic.id}>
-              <a
-                href="#"
-                onClick={(evt) => {
-                  evt.preventDefault();
-                  setSelectedTopic(topic);
-                }}
-              >
-                {topic.title}
-              </a>
-            </li>
-          ))}
-        </ul>
-        <div className="divider"></div>
-        <input
-          type="text"
-          placeholder="New Topic"
-          className="input-bordered input input-sm w-full"
-          onKeyDown={(e) => {
-            if (e.key === "Enter") {
-              createTopic.mutate({
-                title: e.currentTarget.value,
-              });
-              e.currentTarget.value = "";
-            }
-          }}
-        />
-      </div>
-      <div className="col-span-3">
-        <div>
-          {notes?.map((note) => (
-            <div key={note.id} className="mt-5">
-              <NoteCard
-                note={note}
-                onDelete={() => void deleteNote.mutate({ id: note.id })}
-              />
-            </div>
-          ))}
+    <div className="hero mt-40">
+      <div className="hero-content text-center ">
+        <div className="w-9/12">
+          <h1 className="mb-5 text-5xl font-bold text-primary">
+            Welcome to Simpleng Apps!
+          </h1>
+          <p className="mb-20  text-secondary-content">
+            Ready to enter the exciting world of web apps? Look no further than
+            our collection of{" "}
+            <span className="font-semibold">
+              {" "}
+              NextJs, Prisma, Postgresql, useQuery, and Redux-powered{" "}
+            </span>{" "}
+            creations! Curated by{" "}
+            <span className="font-semibold">
+              {" "}
+              Mark Dave Soriano and the Innoendo IT Solutions team
+            </span>
+            , our web apps are the perfect blend of fun and functionality. Come
+            explore the possibilities and join us on this wild web adventure!
+          </p>
+          <button
+            className="btn-primary btn"
+            onClick={() => void router.push("/robofriends")}
+          >
+            Get Started
+          </button>
         </div>
-
-        <NoteEditor
-          onSave={({ title, content }) => {
-            void createNote.mutate({
-              title,
-              content,
-              topicId: selectedTopic?.id ?? "",
-            });
-          }}
-        />
       </div>
     </div>
   );
