@@ -50,7 +50,7 @@ const NoteTaker: React.FC = () => {
 
   return (
     <div className="grid grid-cols-4 gap-2">
-      <div className="col-span-1">
+      <div className="col-span-1 pt-5">
         <ul className="w-100 menu rounded-box bg-base-100">
           {topics?.map((topic) => (
             <li key={topic.id}>

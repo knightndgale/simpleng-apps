@@ -1,6 +1,6 @@
 /* eslint-disable @next/next/no-img-element */
 /* eslint-disable @typescript-eslint/restrict-template-expressions */
-import React, { useState } from "react";
+import React, { useCallback, useState } from "react";
 import { MagnifyingGlassIcon } from "@heroicons/react/24/solid";
 import { useSession } from "next-auth/react";
 import { type User } from "@prisma/client";
@@ -20,22 +20,23 @@ const Robofriends = () => {
     },
   });
 
-  const handleSearchChange = ({
-    target,
-  }: React.ChangeEvent<HTMLInputElement>) => {
-    setUserSearch(target.value);
-    if (target.value) {
-      const newUsers = users.filter((user) =>
-        user.name?.toLowerCase().includes(target.value.toLowerCase())
-      );
-      return setUsers(newUsers);
-    }
-    setUsers(userData || []);
-  };
+  const handleSearchChange = useCallback(
+    ({ target }: React.ChangeEvent<HTMLInputElement>) => {
+      setUserSearch(target.value);
+      if (target.value) {
+        const newUsers = (userData || []).filter((user) =>
+          user.name?.toLowerCase().includes(target.value.toLowerCase())
+        );
+        return setUsers(newUsers);
+      }
+      setUsers(userData || []);
+    },
+    [userData]
+  );
 
   return (
-    <div className="grid grid-cols-4 gap-2">
-      <div className="col-span-1">
+    <div className="grid max-h-screen grid-cols-4 gap-2">
+      <div className="col-span-1 max-h-screen pt-5">
         <div className="relative">
           <input
             type="text"
@@ -79,38 +80,36 @@ const Robofriends = () => {
           sessionStatus === "loading" && <RobofriendProfileCardSkeleton />
         )}
       </div>
-      <div className="col-span-3 pl-3">
-        <div className="flex flex-wrap gap-3">
-          {users.length > 0 && sessionStatus === "authenticated"
-            ? users.map((user, index) => (
-                <div
-                  key={`robocards-${index}`}
-                  className="h-75 card w-60 rounded-lg bg-secondary shadow-lg transition ease-in-out hover:-translate-y-1  hover:scale-105"
-                  // style={{ backgroundColor: randomColor() }}
-                >
-                  <figure className="px-10 pt-10">
-                    <div className="avatar">
-                      <div
-                        className="w-24 rounded-full  bg-secondary-content"
-                        // style={{ backgroundColor: randomColor() }}
-                      >
-                        <img
-                          src={`https://robohash.org/${user.name}`}
-                          alt={user.name || "robofriend-friend"}
-                        />
-                      </div>
+
+      <div className="col-span-3 flex max-h-screen flex-wrap  gap-3  overflow-y-auto p-5  ">
+        {users.length > 0
+          ? users.map((user, index) => (
+              <div
+                key={`robocards-${index}`}
+                className="h-75 card w-60 rounded-lg bg-secondary shadow-lg transition ease-in-out hover:-translate-y-1  hover:scale-105"
+                // style={{ backgroundColor: randomColor() }}
+              >
+                <figure className="px-10 pt-10">
+                  <div className="avatar">
+                    <div
+                      className="w-24 rounded-full  bg-secondary-content"
+                      // style={{ backgroundColor: randomColor() }}
+                    >
+                      <img
+                        src={`https://robohash.org/${user.name}`}
+                        alt={user.name || "robofriend-friend"}
+                      />
                     </div>
-                  </figure>
-                  <div className="card-body items-center text-center">
-                    <h2 className="card-title">{user.name}</h2>
                   </div>
+                </figure>
+                <div className="card-body items-center text-center">
+                  <h2 className="card-title">{user.name}</h2>
                 </div>
-              ))
-            : sessionStatus === "loading" &&
-              [1, 2, 3, 4, 5].map((_, index) => (
-                <RobofriendCardSkeleton key={`robocards-skeleton-${index}`} />
-              ))}
-        </div>
+              </div>
+            ))
+          : sessionStatus === "loading" && (
+              <RobofriendCardSkeleton length={8} />
+            )}
       </div>
     </div>
   );
@@ -118,18 +117,30 @@ const Robofriends = () => {
 
 export default Robofriends;
 
-export const RobofriendCardSkeleton: React.FC = () => (
-  <div className="h-100 card w-60 animate-pulse rounded-lg bg-gray-200 shadow-lg ">
-    <figure className=" animate-pulse  bg-gray-300  px-10 pt-10">
-      <div className="avatar animate-pulse bg-gray-300 ">
-        <div className="w-24 rounded-full  bg-gray-500 "></div>
-      </div>
-    </figure>
-    <div className="card-body animate-pulse items-center bg-gray-300 text-center">
-      <div className="mb-2 h-3 w-40 rounded bg-gray-400"></div>
-    </div>
-  </div>
-);
+export const RobofriendCardSkeleton: React.FC<{ length?: number | never }> = ({
+  length = 5,
+}) => {
+  return (
+    <>
+      {length &&
+        Array.from({ length }, (_, index) => (
+          <div
+            key={`RobofriendCardSkeleton-${index}`}
+            className="h-100 card w-60 animate-pulse rounded-lg bg-gray-200 shadow-lg "
+          >
+            <figure className=" animate-pulse  bg-gray-300  px-10 pt-10">
+              <div className="avatar animate-pulse bg-gray-300 ">
+                <div className="w-24 rounded-full  bg-gray-500 "></div>
+              </div>
+            </figure>
+            <div className="card-body animate-pulse items-center bg-gray-300 text-center">
+              <div className="mb-2 h-3 w-40 rounded bg-gray-400"></div>
+            </div>
+          </div>
+        ))}
+    </>
+  );
+};
 
 export const RobofriendProfileCardSkeleton: React.FC = () => (
   <div className="w-100 h-125 flex  animate-pulse  flex-col items-center justify-center rounded-lg bg-gray-300 pb-20 ">

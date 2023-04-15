@@ -8,6 +8,12 @@ const tabs = [
   ["Robofriends", "/robofriends"],
   ["Notetaker", "/notetaker"],
   ["FacerAi", "/#"],
+  ["Weather", "/#"],
+  ["News", "/#"],
+  ["Snake", "/#"],
+  ["CSV to JSON", "/#"],
+  ["DTR Encode", "/#"],
+  ["More...", "/#"],
 ];
 
 const Header = () => {
