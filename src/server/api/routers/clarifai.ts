@@ -32,7 +32,8 @@ export const clarifaiRouter = createTRPCRouter({
         `https://api.clarifai.com/v2/models/face-detection/versions/6dc7e46bc9124c5c8824be4822abe105/outputs`,
         requestOptions(input.imageUrl)
       )
-        .then((response) => response.json().then((res: ClarifaiReponse) => res))
+        .then((response) => response.json())
+        .then((res: ClarifaiReponse) => res)
         .catch(
           (error) =>
             new TRPCError({
