@@ -7,7 +7,7 @@ import React from "react";
 const tabs = [
   ["Robofriends", "/robofriends"],
   ["Notetaker", "/notetaker"],
-  ["FacerAi", "/#"],
+  ["FaceAI", "/face-ai"],
   ["Weather", "/#"],
   ["News", "/#"],
   ["Snake", "/#"],
@@ -16,7 +16,7 @@ const tabs = [
   ["More...", "/#"],
 ];
 
-const Header = () => {
+const Navbar = () => {
   const router = useRouter();
 
   const { data: sessionData, status } = useSession();
@@ -84,4 +84,4 @@ const Header = () => {
   );
 };
 
-export default Header;
+export default Navbar;
