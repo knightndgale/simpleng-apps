@@ -1,10 +1,13 @@
 /* eslint-disable @next/next/no-img-element */
-import { PhotoIcon, XMarkIcon } from "@heroicons/react/24/solid";
+import { XMarkIcon, LinkIcon } from "@heroicons/react/24/solid";
+import { TRPCError } from "@trpc/server";
 import { useRef, useState } from "react";
 import { facerAiDummyImage } from "~/constants/dummy";
+import { imageUrlSchema } from "~/schema/clarifai.z";
+import { api } from "~/utils/api";
 
 const FaceAI: React.FC = () => {
-  const [imageUrl, setImageUrl] = useState<string>();
+  const [imageUrl, setImageUrl] = useState<string | undefined>();
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const dismissImage = () => {
@@ -12,23 +15,24 @@ const FaceAI: React.FC = () => {
     if (fileInputRef.current) fileInputRef.current.value = "";
   };
 
-  const handleImageSelect = (event: React.ChangeEvent<HTMLInputElement>) => {
-    if (!event.target.files || event.target.files?.length < 1) {
-      return dismissImage();
-    }
+  const { mutate: clarifaiMutate } = api.clarifai.predict.useMutation({
+    onError: (error) => {
+      console.error(error);
+    },
+    onSuccess: (data) => {
+      if (!(data instanceof TRPCError))
+        console.log(data.outputs[0]?.data.regions);
+    },
+  });
 
-    const file = event.target.files?.[0];
-    if (!file) return;
-    const reader = new FileReader();
+  const handleOnChangeImageUrl = (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    const url = imageUrlSchema.safeParse(event.target.value);
 
-    reader.onload = (_event) => {
-      const arrayBuffer = reader.result as ArrayBuffer;
-      const buffer = Buffer.from(arrayBuffer);
-      console.log(buffer);
-      setImageUrl(_event.target?.result as string);
-    };
-
-    reader.readAsDataURL(file);
+    if (!url.success) return dismissImage();
+    clarifaiMutate({ imageUrl: url.data });
+    setImageUrl(event.target.value);
   };
 
   return (
@@ -37,13 +41,13 @@ const FaceAI: React.FC = () => {
         <div className="relative">
           <input
             ref={fileInputRef}
-            type="file"
-            onChange={handleImageSelect}
-            accept=".jpeg, .png, .jpg"
-            className="w-full cursor-pointer truncate rounded-md border border-gray-300 py-2 pl-10 pr-14 text-sm text-gray-500 file:hidden focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500 sm:text-sm"
+            type="text"
+            onChange={handleOnChangeImageUrl}
+            placeholder="Add image url"
+            className="w-full cursor-pointer truncate rounded-md border border-gray-300 py-2 pl-10 pr-2 text-sm text-gray-500 file:hidden focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500 sm:text-sm"
           />
           <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
-            <PhotoIcon className="h-5 w-5 text-gray-400" aria-hidden="true" />
+            <LinkIcon className="h-5 w-5 text-gray-400" aria-hidden="true" />
           </div>
         </div>
 

@@ -1,2 +1,2 @@
 export const facerAiDummyImage =
-  "https://img.freepik.com/free-photo/construction-warning-sign-icon-concept_53876-123765.jpg?w=1480&t=st=1681632852~exp=1681633452~hmac=63e03e3a299495bb750f3e146fd1b89a807b7e069f61203b68020de93bddebc1";
+  "https://img.freepik.com/free-photo/people-collage-design_23-2148888277.jpg?w=1060&t=st=1681658477~exp=1681659077~hmac=d36ceb2273b00d1f381508750adc8e0e0e25ed68149591e20bf745a7f7598d37";
