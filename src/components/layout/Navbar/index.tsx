@@ -40,7 +40,7 @@ const Navbar = () => {
               key={`${title || "nav"}-#${index}`}
               onClick={() => void router.push(`${path || ""}`)}
               className={`tab text-indigo-100 ${
-                router.pathname === path ? "tab-active" : ""
+                router.pathname === path ? "font-bold" : ""
               } transition ease-in-out hover:scale-105`}
             >
               {title}

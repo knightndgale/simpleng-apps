@@ -1,3 +1,4 @@
+import { DocumentPlusIcon } from "@heroicons/react/24/solid";
 import { useSession } from "next-auth/react";
 import { useState } from "react";
 import NoteCard from "~/components/noteCard";
@@ -15,7 +16,7 @@ const NoteTaker: React.FC = () => {
     undefined, // no input
     {
       enabled: sessionData?.user !== undefined,
-      onSuccess: (data) => {
+      onSuccess: (data: Topic[]) => {
         setSelectedTopic(selectedTopic ?? data[0] ?? null);
       },
     }
@@ -51,13 +52,35 @@ const NoteTaker: React.FC = () => {
   return (
     <div className="grid grid-cols-4 gap-2">
       <div className="col-span-1 pt-5">
+        <div className="relative">
+          <input
+            type="text"
+            className="w-full rounded-md border border-gray-300 py-2 pl-10 pr-4 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500 sm:text-sm"
+            placeholder="New Topic"
+            onKeyDown={(e) => {
+              if (e.key === "Enter") {
+                createTopic.mutate({
+                  title: e.currentTarget.value,
+                });
+                e.currentTarget.value = "";
+              }
+            }}
+          />
+          <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
+            <DocumentPlusIcon
+              className="h-5 w-5 text-gray-400"
+              aria-hidden="true"
+            />
+          </div>
+        </div>
+        <div className="divider"></div>
         <ul className="w-100 menu rounded-box bg-base-100">
-          {topics?.map((topic) => (
+          {topics?.map((topic: Topic) => (
             <li key={topic.id}>
               <a
                 href="#"
-                onClick={(evt) => {
-                  evt.preventDefault();
+                onClick={(event) => {
+                  event.preventDefault();
                   setSelectedTopic(topic);
                 }}
               >
@@ -66,20 +89,6 @@ const NoteTaker: React.FC = () => {
             </li>
           ))}
         </ul>
-        <div className="divider"></div>
-        <input
-          type="text"
-          placeholder="New Topic"
-          className="input-bordered input input-sm w-full"
-          onKeyDown={(e) => {
-            if (e.key === "Enter") {
-              createTopic.mutate({
-                title: e.currentTarget.value,
-              });
-              e.currentTarget.value = "";
-            }
-          }}
-        />
       </div>
       <div className="col-span-3">
         <div>

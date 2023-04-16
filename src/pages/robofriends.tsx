@@ -64,6 +64,7 @@ const Robofriends = () => {
                 // style={{ backgroundColor: randomColor() }}
               >
                 <img
+                  loading="lazy"
                   src={`https://robohash.org/${sessionData.user.name}`}
                   alt={sessionData.user.name || "robofriend-profile"}
                 />
@@ -98,6 +99,7 @@ const Robofriends = () => {
                       // style={{ backgroundColor: randomColor() }}
                     >
                       <img
+                        loading="lazy"
                         src={`https://robohash.org/${robot.name}`}
                         alt={robot.name || "robofriend-friend"}
                       />
