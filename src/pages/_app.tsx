@@ -6,7 +6,7 @@ import { api } from "~/utils/api";
 import DefaultLayout from "~/components/layout";
 
 import "~/styles/globals.css";
-import ReduxProvider from "~/utils/ReduxProvider";
+import ReduxProvider from "~/provider/redux.provider";
 
 const MyApp: AppType<{ session: Session | null }> = ({
   Component,

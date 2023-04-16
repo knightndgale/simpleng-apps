@@ -1,11 +1,7 @@
 import { createSlice, type PayloadAction } from "@reduxjs/toolkit";
 import { type UserWithoutEmail } from "~/pages/robofriends";
 
-export type RobotfriendsStore = {
-  robots: UserWithoutEmail[];
-};
-
-const initialState: RobotfriendsStore = {
+const initialState = <{ robots: UserWithoutEmail[] }>{
   robots: [],
 };
 
