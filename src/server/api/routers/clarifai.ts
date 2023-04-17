@@ -33,7 +33,6 @@ export const clarifaiRouter = createTRPCRouter({
         requestOptions(input.imageUrl)
       )
         .then((response) => response.json())
-        .then((res: ClarifaiReponse) => res)
         .catch(
           (error) =>
             new TRPCError({

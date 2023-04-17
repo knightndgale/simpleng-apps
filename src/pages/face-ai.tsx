@@ -20,8 +20,7 @@ const FaceAI: React.FC = () => {
       console.error(error);
     },
     onSuccess: (data) => {
-      if (!(data instanceof TRPCError))
-        console.log(data.outputs[0]?.data.regions);
+      if (!(data instanceof TRPCError)) console.log(data);
     },
   });
 
