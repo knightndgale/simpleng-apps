@@ -59,6 +59,12 @@ const FaceAI: React.FC = () => {
 
           <img
             loading="lazy"
+            onError={(e) => {
+              if (e.target?.src) {
+                e.target.src = facerAiDummyImage;
+                setImageUrl(facerAiDummyImage);
+              }
+            }}
             src={imageUrl ?? facerAiDummyImage}
             className=" max-w-full rounded-lg shadow-none transition-shadow duration-300 ease-in-out hover:shadow-lg hover:shadow-black/30"
             alt={fileInputRef.current?.value || ""}
