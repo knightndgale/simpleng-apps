@@ -7,23 +7,6 @@ import { imageUrlSchema } from "~/schema/clarifai.z";
 import { TRPCError } from "@trpc/server";
 import requestOptions from "~/constants/clarifai";
 
-type BoundingBox = {
-  top_row: number;
-  left_col: number;
-  bottom_row: number;
-  right_col: number;
-};
-
-type Regions = {
-  regions: BoundingBox[];
-};
-type Outputs = {
-  data: Regions;
-};
-type ClarifaiReponse = {
-  outputs: Outputs[];
-};
-
 export const clarifaiRouter = createTRPCRouter({
   predict: protectedProcedure
     .input(z.object({ imageUrl: imageUrlSchema }))
@@ -40,7 +23,5 @@ export const clarifaiRouter = createTRPCRouter({
               message: JSON.stringify(error),
             })
         );
-
-      // return input.imageUrl;
     }),
 });

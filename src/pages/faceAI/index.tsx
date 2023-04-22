@@ -1,17 +1,24 @@
 /* eslint-disable @next/next/no-img-element */
 import { XMarkIcon, LinkIcon } from "@heroicons/react/24/solid";
-import { TRPCError } from "@trpc/server";
 import { useRef, useState } from "react";
+import FaceAIBox from "~/components/faceaiBox";
 import { facerAiDummyImage } from "~/constants/dummy";
 import { imageUrlSchema } from "~/schema/clarifai.z";
+import { type ClarifaiInterface, type Region } from "~/types/clarifai.types";
 import { api } from "~/utils/api";
 
 const FaceAI: React.FC = () => {
+  const imageRef = useRef<HTMLImageElement>(null);
+  const [boxRegions, setBoxRegions] = useState<Region[]>([]);
+
   const [imageUrl, setImageUrl] = useState<string | undefined>();
+  const [faceNumber, setFaceNumber] = useState<number>(0);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const dismissImage = () => {
     setImageUrl(undefined);
+    setBoxRegions([]);
+    setFaceNumber(0);
     if (fileInputRef.current) fileInputRef.current.value = "";
   };
 
@@ -19,8 +26,21 @@ const FaceAI: React.FC = () => {
     onError: (error) => {
       console.error(error);
     },
-    onSuccess: (data) => {
-      if (!(data instanceof TRPCError)) console.log(data);
+    onSuccess: (data: ClarifaiInterface) => {
+      if (data.status.code !== 10000) {
+        return console.error(data.status.description);
+      }
+      const outputs = data.outputs[0];
+      if (
+        !outputs ||
+        !outputs.data.regions.length ||
+        !outputs.data.regions[0]
+      ) {
+        dismissImage();
+        return;
+      }
+      setBoxRegions(outputs.data.regions);
+      setFaceNumber(outputs.data.regions.length);
     },
   });
 
@@ -51,24 +71,39 @@ const FaceAI: React.FC = () => {
         </div>
 
         <div className="divider"></div>
+        {faceNumber !== 0 && (
+          <div className="flex">
+            <article className="prose">
+              <h3>Faces Detected: {faceNumber}</h3>
+            </article>
+          </div>
+        )}
       </div>
 
       <div className="col-span-3 flex flex-wrap  gap-3 p-5  ">
         <div className="relative">
-          {/* <div className="absolute right-20 top-20  box-border h-32 w-32 border-4 border-blue-700 p-4 "></div> */}
-
           <img
+            ref={imageRef}
             loading="lazy"
             src={imageUrl ?? facerAiDummyImage}
             className=" max-w-full rounded-lg shadow-none transition-shadow duration-300 ease-in-out hover:shadow-lg hover:shadow-black/30"
             alt={fileInputRef.current?.value || ""}
           />
+          {boxRegions.length > 0 &&
+            boxRegions.map((boxes: Region, index: number) => (
+              <FaceAIBox
+                key={`boxes-${index}`}
+                boundigBox={boxes.region_info.bounding_box}
+                imageHeight={imageRef.current?.height || 0}
+                imageWidth={imageRef.current?.width || 0}
+              />
+            ))}
           {imageUrl && fileInputRef.current?.value && (
             <button
-              className="absolute right-0 top-0 m-5 rounded-full bg-primary p-1 text-white transition ease-in-out hover:-translate-y-1  hover:scale-105"
+              className="absolute right-0 top-0 m-3 rounded-full bg-primary p-1 text-white transition ease-in-out hover:-translate-y-1  hover:scale-105"
               onClick={() => dismissImage()}
             >
-              <XMarkIcon className="h-6 w-6 " />
+              <XMarkIcon className="h-4 w-4 " />
             </button>
           )}
         </div>

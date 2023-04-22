@@ -7,7 +7,7 @@ import React from "react";
 const tabs = [
   ["Robofriends", "/robofriends"],
   ["Notetaker", "/notetaker"],
-  ["FaceAI", "/face-ai"],
+  ["FaceAI", "/faceAI"],
   ["Weather", "/#"],
   ["News", "/#"],
   ["Snake", "/#"],
