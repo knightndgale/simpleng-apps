@@ -1,14 +1,14 @@
+import { type User } from "@prisma/client";
 import { createSlice, type PayloadAction } from "@reduxjs/toolkit";
 import {
+  type Topic,
   type PublicReduxInterface,
   type Robot,
-  type Note,
-  type User,
 } from "~/types/robofriends.types";
 
 const initialState: PublicReduxInterface = {
   robots: [],
-  notes: [],
+  topics: [],
   user: {},
 };
 
@@ -20,10 +20,10 @@ const publicSlice = createSlice({
       state.robots = action.payload as Robot[];
     },
     setNotes(state, action) {
-      state.notes = action.payload as Note[];
+      state.topics = action.payload as Topic[];
     },
     setUser(state, action) {
-      state.user = action.payload as User;
+      state.user = action.payload as Partial<Pick<User, "email" | "name">>;
     },
     searchRobots(state, action: PayloadAction<string>) {
       state.robots = state.robots.filter((robot) =>

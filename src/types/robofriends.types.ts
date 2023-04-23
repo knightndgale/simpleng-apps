@@ -1,24 +1,16 @@
+import { type User, type Note } from "@prisma/client";
+
 export interface PublicReduxInterface {
   robots: Robot[];
-  notes: Note[];
-  user: Partial<User>;
-}
-
-export type Note = {
-  title: string;
   topics: Topic[];
-};
+  user: Partial<Pick<User, "email" | "name">>;
+}
 
 export type Topic = {
   title: string;
-  content: string;
+  note: Pick<Note, "title" | "content">[];
 };
 
 export type Robot = {
   name: string;
-};
-
-export type User = {
-  name: string;
-  email: string;
 };
