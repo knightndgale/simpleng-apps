@@ -3,6 +3,7 @@ import { UserCircleIcon, HomeIcon } from "@heroicons/react/24/solid";
 import { signIn, signOut, useSession } from "next-auth/react";
 import { useRouter } from "next/router";
 import React from "react";
+import { PUBLIC } from "~/constants/common";
 
 const tabs = [
   ["Robofriends", "/robofriends"],
@@ -38,9 +39,15 @@ const Navbar = () => {
             //* Read documentation: https://nextjs.org/docs/api-reference/next/router#potential-eslint-errors
             <a
               key={`${title || "nav"}-#${index}`}
-              onClick={() => void router.push(`${path || ""}`)}
+              onClick={() => {
+                console.log(`/${PUBLIC}/${path || ""}`);
+                void router.push(`${path || ""}`);
+              }}
               className={`tab text-indigo-100 ${
-                router.pathname === path ? "font-bold" : ""
+                router.pathname === path ||
+                router.pathname === `/${PUBLIC}${path || ""}`
+                  ? "font-bold"
+                  : ""
               } transition ease-in-out hover:scale-105`}
             >
               {title}

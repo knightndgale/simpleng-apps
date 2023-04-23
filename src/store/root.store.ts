@@ -1,5 +1,6 @@
 import { configureStore } from "@reduxjs/toolkit";
 import robofriendsSlice from "~/reducers/robofriends.reducer";
+import publicSlice from "~/reducers/public.reducer";
 
 //# ####################
 //* Add Your Slices Here
@@ -8,6 +9,7 @@ import robofriendsSlice from "~/reducers/robofriends.reducer";
 const rootStore = configureStore({
   reducer: {
     robofriends: robofriendsSlice,
+    publicStore: publicSlice,
   },
 });
 

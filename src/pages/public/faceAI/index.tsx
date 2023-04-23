@@ -2,7 +2,7 @@
 import { XMarkIcon, LinkIcon } from "@heroicons/react/24/solid";
 import { useRef, useState } from "react";
 import FaceAIBox from "~/components/faceaiBox";
-import { defaultImage } from "~/constants/clarifai";
+import { facerAiDummyImage } from "~/constants/dummy";
 import { imageUrlSchema } from "~/schema/clarifai.z";
 import { type ClarifaiInterface, type Region } from "~/types/clarifai.types";
 import { api } from "~/utils/api";
@@ -85,7 +85,7 @@ const FaceAI: React.FC = () => {
           <img
             ref={imageRef}
             loading="lazy"
-            src={imageUrl ?? defaultImage}
+            src={imageUrl ?? facerAiDummyImage}
             className=" max-w-full rounded-lg shadow-none transition-shadow duration-300 ease-in-out hover:shadow-lg hover:shadow-black/30"
             alt={fileInputRef.current?.value || ""}
           />
