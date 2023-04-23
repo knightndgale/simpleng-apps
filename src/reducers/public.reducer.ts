@@ -9,7 +9,10 @@ import {
 const initialState: PublicReduxInterface = {
   robots: [],
   topics: [],
-  user: {},
+  user: undefined,
+  clarifai: {
+    counter: 0,
+  },
 };
 
 const publicSlice = createSlice({
@@ -27,8 +30,14 @@ const publicSlice = createSlice({
     },
     searchRobots(state, action: PayloadAction<string>) {
       state.robots = state.robots.filter((robot) =>
-        robot.name?.toLowerCase().includes(action.payload)
+        robot.name?.toLowerCase().includes(action.payload.toLowerCase())
       );
+    },
+    incrementClarifaiCounter(state) {
+      state.clarifai.counter++;
+    },
+    resetClarifaiCounter(state) {
+      state.clarifai.counter = 0;
     },
   },
 });

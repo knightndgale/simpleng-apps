@@ -1,11 +1,11 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable @next/next/no-img-element */
-/* eslint-disable @typescript-eslint/restrict-template-expressions */
-import React, { useCallback, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { MagnifyingGlassIcon } from "@heroicons/react/24/solid";
 import { useDispatch, useSelector } from "react-redux";
 import { type RootState } from "~/store/root.store";
 
-import { setRobots, searchRobots } from "~/reducers/public.reducer";
+import { setRobots, searchRobots, setUser } from "~/reducers/public.reducer";
 import { getServerSession } from "next-auth";
 import { type GetServerSideProps, type GetServerSidePropsContext } from "next";
 import { authOptions } from "~/server/auth";
@@ -14,24 +14,38 @@ import {
   RobofriendCardSkeleton,
   RobofriendProfileCardSkeleton,
 } from "../robofriends";
+import { generateUser, getRobots } from "~/utils/generateRandomData";
 
 const Robofriends = () => {
   const dispatch = useDispatch();
+
   const robots = useSelector((state: RootState) => state.publicStore.robots);
   const user = useSelector((state: RootState) => state.publicStore.user);
-  const [currentRobots, setCurrentRobots] = useState<Robot[]>([]);
 
-  const [userSearch, setUserSearch] = useState("");
+  const [currentRobots, setCurrentRobots] = useState<Robot[]>(robots);
 
-  const handleSearchChange = useCallback(
-    ({ target }: React.ChangeEvent<HTMLInputElement>) => {
-      setUserSearch(target.value);
-      dispatch(setRobots(robots || []));
-      if (target.value) dispatch(searchRobots(target.value));
-    },
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    [robots]
-  );
+  const handleSearchChange = ({
+    target,
+  }: React.ChangeEvent<HTMLInputElement>) => {
+    dispatch(setRobots(currentRobots));
+    if (target.value) dispatch(searchRobots(target.value));
+  };
+
+  const generateRoboFriendData = () => {
+    const generatedRobots = getRobots();
+    const generatedUser = generateUser();
+
+    dispatch(setRobots(generatedRobots));
+    dispatch(setUser(generatedUser));
+
+    setCurrentRobots(generatedRobots);
+  };
+
+  useEffect(() => {
+    if (robots.length < 1 || !user) {
+      return generateRoboFriendData();
+    }
+  }, []);
 
   return (
     <div className="grid max-h-screen grid-cols-4 gap-2">
@@ -41,7 +55,6 @@ const Robofriends = () => {
             type="text"
             className="w-full rounded-md border border-gray-300 py-2 pl-10 pr-4 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500 sm:text-sm"
             placeholder="Search"
-            value={userSearch}
             onChange={handleSearchChange}
           />
           <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
@@ -53,16 +66,14 @@ const Robofriends = () => {
         </div>
         <div className="divider"></div>
 
-        {currentRobots.length > 0 && user ? (
+        {robots.length > 0 && user ? (
           <div className="flex flex-col items-center justify-center">
             <div className="avatar">
-              <div
-                className="w-24 rounded-full bg-secondary-content"
-                // style={{ backgroundColor: randomColor() }}
-              >
+              <div className="w-24 rounded-full bg-secondary-content">
                 <img
                   loading="lazy"
-                  src={`https://robohash.org/${user.name}`}
+                  src={`https://robohash.org/${user.name || "simpleng-apps"})
+                  }`}
                   alt={user.name || "robofriend-profile"}
                 />
               </div>
@@ -82,7 +93,7 @@ const Robofriends = () => {
       </div>
 
       <div className="col-span-3 flex max-h-screen flex-wrap  gap-3  overflow-y-auto p-5  ">
-        {currentRobots.length > 0 ? (
+        {robots.length > 0 ? (
           robots.map((robot, index) => (
             <div
               key={`robocards-${index}`}

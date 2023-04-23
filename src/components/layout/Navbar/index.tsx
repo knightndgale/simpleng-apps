@@ -39,10 +39,7 @@ const Navbar = () => {
             //* Read documentation: https://nextjs.org/docs/api-reference/next/router#potential-eslint-errors
             <a
               key={`${title || "nav"}-#${index}`}
-              onClick={() => {
-                console.log(`/${PUBLIC}/${path || ""}`);
-                void router.push(`${path || ""}`);
-              }}
+              onClick={() => void router.push(`${path || ""}`)}
               className={`tab text-indigo-100 ${
                 router.pathname === path ||
                 router.pathname === `/${PUBLIC}${path || ""}`
