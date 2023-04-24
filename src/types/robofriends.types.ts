@@ -11,6 +11,7 @@ export type Clarifai = {
   counter: number;
 };
 export type Topic = {
+  id: string;
   title: string;
   note: Pick<Note, "title" | "content">[];
 };

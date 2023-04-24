@@ -1,9 +1,14 @@
 import { DocumentPlusIcon } from "@heroicons/react/24/solid";
 import { useSession } from "next-auth/react";
 import { useState } from "react";
+import { getServerSession } from "next-auth";
+import { type GetServerSideProps, type GetServerSidePropsContext } from "next";
+
+import { PUBLIC } from "~/constants/common";
 import NoteCard from "~/components/noteCard";
 import NoteEditor from "~/components/noteEditor";
 import { type RouterOutputs, api } from "~/utils/api";
+import { authOptions } from "~/server/auth";
 
 type Topic = RouterOutputs["topic"]["getAll"][0];
 
@@ -117,3 +122,24 @@ const NoteTaker: React.FC = () => {
 };
 
 export default NoteTaker;
+
+//* Documentation
+//* https://next-auth.js.org/tutorials/securing-pages-and-api-routes#server-side
+export const getServerSideProps: GetServerSideProps = async (
+  context: GetServerSidePropsContext
+) => {
+  const session = await getServerSession(context.req, context.res, authOptions);
+
+  if (!session) {
+    return {
+      redirect: {
+        destination: `/${PUBLIC}/notetaker`,
+        permanent: false,
+      },
+    };
+  }
+
+  return {
+    props: { session },
+  };
+};
