@@ -1,27 +1,34 @@
-import { type NextPage } from "next";
-import Head from "next/head";
+import { useRouter } from "next/router";
 
-import Content from "~/components/content";
-
-const Home: NextPage = () => {
+const Home: React.FC = () => {
+  const router = useRouter();
   return (
-    <>
-      <Head>
-        <title>Simpleng App</title>
-          <meta
-          name="author"
-          content="Mark Dav Soriano"
-        />
-        <meta
-          name="description"
-          content="Created with T3 | Curated by Mark Dave Soriano and the Innoendo IT Solutions team"
-        />
-        <link rel="icon" href="/favicon.ico" />
-      </Head>
-      <main>
-        <Content />
-      </main>
-    </>
+    <div className="flex justify-center py-20">
+      <div className=" flex-col justify-center self-center text-center sm:w-9/12">
+        <h1 className="mb-5 text-4xl font-bold text-primary md:text-5xl lg:text-6xl">
+          Welcome to Simpleng Apps!
+        </h1>
+        <p className="mb-16 text-sm text-secondary-content md:text-base lg:text-lg">
+          Ready to enter the exciting world of web apps? Look no further than
+          our collection of{" "}
+          <span className="font-semibold">
+            NextJs, Prisma, Postgresql, useQuery, and Redux-powered
+          </span>{" "}
+          creations! Curated by{" "}
+          <span className="font-semibold">
+            Mark Dave Soriano and the Innoendo IT Solutions team
+          </span>
+          , our web apps are the perfect blend of fun and functionality. Come
+          explore the possibilities and join us on this wild web adventure!
+        </p>
+        <button
+          className="btn-primary btn"
+          onClick={() => void router.push("/robofriends")}
+        >
+          Get Started
+        </button>
+      </div>
+    </div>
   );
 };
 

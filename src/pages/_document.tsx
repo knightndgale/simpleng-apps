@@ -1,4 +1,5 @@
 import { Html, NextScript, Head, Main } from "next/document";
+import NextProgressBar from "nextjs-progressbar";
 
 export default function Document() {
   return (
@@ -12,6 +13,7 @@ export default function Document() {
         />
       </Head>
       <body>
+        <NextProgressBar color="#007ebf" />
         <Main />
         <NextScript />
       </body>

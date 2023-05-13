@@ -1,14 +1,18 @@
 /* eslint-disable @next/next/no-img-element */
-/* eslint-disable @typescript-eslint/restrict-template-expressions */
 import React, { useCallback, useState } from "react";
 import { MagnifyingGlassIcon } from "@heroicons/react/24/solid";
 import { useSession } from "next-auth/react";
 import { type User } from "@prisma/client";
 import { useDispatch, useSelector } from "react-redux";
+import { type GetServerSideProps, type GetServerSidePropsContext } from "next";
+
 import { api } from "~/utils/api";
 import { type RootState } from "~/store/root.store";
 
 import { setRobots, searchRobots } from "~/reducers/robofriends.reducer";
+import { getServerSession } from "next-auth";
+import { authOptions } from "~/server/auth";
+import { PUBLIC } from "~/constants/common";
 
 export type UserWithoutEmail = Omit<User, "email">;
 const Robofriends = () => {
@@ -65,7 +69,7 @@ const Robofriends = () => {
               >
                 <img
                   loading="lazy"
-                  src={`https://robohash.org/${sessionData.user.name}`}
+                  src={`https://robohash.org/${sessionData.user.name || ""}`}
                   alt={sessionData.user.name || "robofriend-profile"}
                 />
               </div>
@@ -100,7 +104,7 @@ const Robofriends = () => {
                     >
                       <img
                         loading="lazy"
-                        src={`https://robohash.org/${robot.name}`}
+                        src={`https://robohash.org/${robot.name || ""}`}
                         alt={robot.name || "robofriend-friend"}
                       />
                     </div>
@@ -159,3 +163,24 @@ export const RobofriendProfileCardSkeleton: React.FC = () => (
     </div>
   </div>
 );
+
+//* Documentation
+//* https://next-auth.js.org/tutorials/securing-pages-and-api-routes#server-side
+export const getServerSideProps: GetServerSideProps = async (
+  context: GetServerSidePropsContext
+) => {
+  const session = await getServerSession(context.req, context.res, authOptions);
+
+  if (!session) {
+    return {
+      redirect: {
+        destination: `/${PUBLIC}/robofriends`,
+        permanent: false,
+      },
+    };
+  }
+
+  return {
+    props: { session },
+  };
+};
