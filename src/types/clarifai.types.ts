@@ -108,3 +108,7 @@ export interface Status {
   description: string;
   req_id: string;
 }
+
+export type Clarifai = {
+  counter: number;
+};

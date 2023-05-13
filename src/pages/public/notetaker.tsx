@@ -1,25 +1,31 @@
-import { DocumentPlusIcon } from "@heroicons/react/24/solid";
-import { useSession } from "next-auth/react";
-import { useState } from "react";
+import { DocumentPlusIcon, XCircleIcon } from "@heroicons/react/24/solid";
+import { v4 as uuidv4, stringify as uuidStringify } from "uuid";
+import { useEffect, useState } from "react";
 import { type GetServerSideProps, type GetServerSidePropsContext } from "next";
 import { getServerSession } from "next-auth";
 import { useDispatch, useSelector } from "react-redux";
-
+import { setTopics, addNote, deleteNote } from "~/reducers/public.reducer";
 import NoteCard from "~/components/noteCard";
 import NoteEditor from "~/components/noteEditor";
-import { type RouterOutputs, api } from "~/utils/api";
 import { authOptions } from "~/server/auth";
 import { type RootState } from "~/store/root.store";
-
-type Topic = RouterOutputs["topic"]["getAll"][0];
+import { type Notes, type Topic } from "~/types/public.types";
 
 const NoteTaker: React.FC = () => {
   const dispatch = useDispatch();
 
-  const robots = useSelector((state: RootState) => state.publicStore.robots);
   const topics = useSelector((state: RootState) => state.publicStore.topics);
 
   const [selectedTopic, setSelectedTopic] = useState<Topic | null>(null);
+  const [notes, setNotes] = useState<Notes[] | null>(null);
+
+  const refreshNotes = () => {
+    topics.forEach((topic) => {
+      if (topic.id === selectedTopic?.id) setNotes(topic.note);
+    });
+  };
+
+  useEffect(() => refreshNotes(), [topics]);
 
   return (
     <div className="grid grid-cols-4 gap-2">
@@ -31,6 +37,12 @@ const NoteTaker: React.FC = () => {
             placeholder="New Topic"
             onKeyDown={(e) => {
               if (e.key === "Enter") {
+                const topic: Topic = {
+                  id: uuidv4(),
+                  title: e.currentTarget.value,
+                  note: [],
+                };
+                dispatch(setTopics(topic));
                 e.currentTarget.value = "";
               }
             }}
@@ -48,8 +60,11 @@ const NoteTaker: React.FC = () => {
             topics?.map((topic) => (
               <li key={topic.id}>
                 <a
+                  className="justify-between"
                   href="#"
                   onClick={(event) => {
+                    setNotes(topic.note);
+                    setSelectedTopic(topic);
                     event.preventDefault();
                   }}
                 >
@@ -61,25 +76,30 @@ const NoteTaker: React.FC = () => {
       </div>
       <div className="col-span-3">
         <div>
-          {/* {notes?.map((note) => (
-            <div key={note.id} className="mt-5">
-              <NoteCard
-                note={note}
-                onDelete={() => void deleteNote.mutate({ id: note.id })}
-              />
-            </div>
-          ))} */}
+          {notes &&
+            notes.map((note, idx) => (
+              <div key={`note-${idx}`} className="mt-5">
+                <NoteCard
+                  note={note}
+                  onDelete={() => {
+                    if (!selectedTopic) return;
+                    dispatch(
+                      deleteNote({ topicId: selectedTopic.id, noteId: note.id })
+                    );
+                  }}
+                />
+              </div>
+            ))}
         </div>
 
-        {/* <NoteEditor
-          onSave={({ title, content }) => {
-            void createNote.mutate({
-              title,
-              content,
-              topicId: selectedTopic?.id ?? "",
-            });
+        <NoteEditor
+          onSave={(note) => {
+            if (selectedTopic) {
+              const newNote = { ...note, id: uuidv4() };
+              dispatch(addNote({ id: selectedTopic.id, note: newNote }));
+            }
           }}
-        /> */}
+        />
       </div>
     </div>
   );

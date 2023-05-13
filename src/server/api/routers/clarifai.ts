@@ -2,13 +2,13 @@
 /* eslint-disable @typescript-eslint/no-unsafe-return */
 import { z } from "zod";
 
-import { createTRPCRouter, protectedProcedure } from "../trpc";
+import { createTRPCRouter, publicProcedure } from "../trpc";
 import { imageUrlSchema } from "~/schema/clarifai.z";
 import { TRPCError } from "@trpc/server";
 import requestOptions from "~/constants/clarifai";
 
 export const clarifaiRouter = createTRPCRouter({
-  predict: protectedProcedure
+  predict: publicProcedure
     .input(z.object({ imageUrl: imageUrlSchema }))
     .mutation(({ input }) => {
       return fetch(

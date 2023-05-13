@@ -1,58 +1,48 @@
 /* eslint-disable @next/next/no-img-element */
 import { UserCircleIcon, HomeIcon } from "@heroicons/react/24/solid";
+import Navigations from "~/constants/nav";
 import { signIn, signOut, useSession } from "next-auth/react";
 import { useRouter } from "next/router";
 import React from "react";
 import { PUBLIC } from "~/constants/common";
-
-const tabs = [
-  ["Robofriends", "/robofriends"],
-  ["Notetaker", "/notetaker"],
-  ["FaceAI", "/faceAI"],
-  ["Weather", "/#"],
-  ["News", "/#"],
-  ["Snake", "/#"],
-  ["CSV to JSON", "/#"],
-  ["DTR Encode", "/#"],
-  ["More...", "/#"],
-];
+import { Hamburger } from "~/constants/svg";
 
 const Navbar = () => {
   const router = useRouter();
 
   const { data: sessionData, status } = useSession();
-
   return (
     <div className="navbar bg-primary text-primary-content">
-      <div className="flex-1">
-        <div className="tabs gap-3">
-          <a
-            onClick={() => void router.push(`/`)}
-            className={`tab  transition ease-in-out hover:scale-105`}
-          >
-            <HomeIcon className=" h-6 w-6 " color="white" />
-          </a>
+      <div className="flex-1 justify-end sm:justify-start">
+        <div className="flex items-center justify-between sm:justify-start">
+          <ul className="ml-2  hidden flex-wrap gap-3 sm:inline-flex">
+            {Navigations.map(({ path, title, Icon }, index) => (
+              <li className="p-2" key={`${title || "nav"}-#${index}`}>
+                <a
+                  onClick={() => void router.push(`${path || ""}`)}
+                  className={` text-indigo-100  ${
+                    router.pathname === path ||
+                    router.pathname === `/${PUBLIC}${path || ""}`
+                      ? "font-bold"
+                      : ""
+                  } inline-flex gap-3 align-top text-sm transition ease-in-out hover:scale-105 hover:cursor-pointer`}
+                >
+                  {title}
+                  <Icon className="h-5 w-5" color="white" />
+                </a>
+              </li>
+            ))}
+          </ul>
 
-          {tabs.map(([title, path], index) => (
-            //? Why router push has void
-            //* router.push returns a promise
-            //* Read documentation: https://nextjs.org/docs/api-reference/next/router#potential-eslint-errors
-            <a
-              key={`${title || "nav"}-#${index}`}
-              onClick={() => void router.push(`${path || ""}`)}
-              className={`tab text-indigo-100 ${
-                router.pathname === path ||
-                router.pathname === `/${PUBLIC}${path || ""}`
-                  ? "font-bold"
-                  : ""
-              } transition ease-in-out hover:scale-105`}
-            >
-              {title}
-            </a>
-          ))}
+          {/* Show the hamburger icon on mobile screens */}
+          <button className="sm:hidden">
+            <Hamburger className="h-6 w-6 fill-current text-white" />
+          </button>
         </div>
       </div>
 
+      {/* WIP */}
+      {/* 
       <div className="flex flex-row justify-center gap-2 align-middle">
         {sessionData && status === "authenticated" ? (
           <>
@@ -83,7 +73,7 @@ const Navbar = () => {
             Login
           </button>
         )}
-      </div>
+      </div> */}
     </div>
   );
 };

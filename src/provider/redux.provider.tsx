@@ -1,9 +1,18 @@
 import React from "react";
 import { Provider } from "react-redux";
-import rootStore from "~/store/root.store";
+
+import { PersistGate } from "redux-persist/integration/react";
+
+import rootStore, { persistor } from "~/store/root.store";
 
 const ReduxProvider: React.FC<React.PropsWithChildren> = ({ children }) => {
-  return <Provider store={rootStore}>{children}</Provider>;
+  return (
+    <Provider store={rootStore}>
+      <PersistGate loading={null} persistor={persistor}>
+        {children}
+      </PersistGate>
+    </Provider>
+  );
 };
 
 export default ReduxProvider;

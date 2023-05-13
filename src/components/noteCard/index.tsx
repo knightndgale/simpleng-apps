@@ -4,7 +4,7 @@ import ReactMarkdown from "react-markdown";
 
 import { type RouterOutputs } from "../../utils/api";
 
-type Note = RouterOutputs["note"]["getAll"][0];
+type Note = Pick<RouterOutputs["note"]["getAll"][0], "content" | "title">;
 
 const NoteCard = ({ note, onDelete }: { note: Note; onDelete: () => void }) => {
   const [isExpanded, setIsExpanded] = useState<boolean>(true);

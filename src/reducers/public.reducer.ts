@@ -3,8 +3,9 @@ import { createSlice, type PayloadAction } from "@reduxjs/toolkit";
 import {
   type Topic,
   type PublicReduxInterface,
-  type Robot,
-} from "~/types/robofriends.types";
+  type Notes,
+} from "~/types/public.types";
+import { type Robot } from "~/types/robofriends.types";
 
 const initialState: PublicReduxInterface = {
   robots: [],
@@ -22,9 +23,30 @@ const publicSlice = createSlice({
     setRobots(state, action) {
       state.robots = action.payload as Robot[];
     },
-    setNotes(state, action) {
-      state.topics = action.payload as Topic[];
+
+    setTopics(state, action) {
+      state.topics.push(action.payload as Topic);
     },
+    addNote(state, action) {
+      const { id, note } = action.payload as { id: string; note: Notes };
+      state.topics.map((topic) => {
+        if (topic.id === id) {
+          topic.note.push(note);
+        }
+      });
+    },
+    deleteNote(state, action) {
+      const { topicId, noteId } = action.payload as {
+        topicId: string;
+        noteId: string;
+      };
+      state.topics.map((topic) => {
+        if (topic.id === topicId) {
+          topic.note = topic.note.filter((data) => data.id !== noteId);
+        }
+      });
+    },
+
     setUser(state, action) {
       state.user = action.payload as Partial<Pick<User, "email" | "name">>;
     },
@@ -42,6 +64,12 @@ const publicSlice = createSlice({
   },
 });
 
-export const { setRobots, searchRobots, setNotes, setUser } =
-  publicSlice.actions;
+export const {
+  setRobots,
+  searchRobots,
+  setTopics,
+  setUser,
+  addNote,
+  deleteNote,
+} = publicSlice.actions;
 export default publicSlice.reducer;
