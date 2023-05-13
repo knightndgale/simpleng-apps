@@ -26,8 +26,8 @@ const Navbar = () => {
                       : ""
                   } inline-flex gap-3 align-top text-sm transition ease-in-out hover:scale-105 hover:cursor-pointer`}
                 >
-                  {title}
                   <Icon className="h-5 w-5" color="white" />
+                  {title}
                 </a>
               </li>
             ))}

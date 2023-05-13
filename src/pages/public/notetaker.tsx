@@ -1,5 +1,5 @@
-import { DocumentPlusIcon, XCircleIcon } from "@heroicons/react/24/solid";
-import { v4 as uuidv4, stringify as uuidStringify } from "uuid";
+import { DocumentPlusIcon } from "@heroicons/react/24/solid";
+import { v4 as uuidv4 } from "uuid";
 import { useEffect, useState } from "react";
 import { type GetServerSideProps, type GetServerSidePropsContext } from "next";
 import { getServerSession } from "next-auth";
@@ -13,11 +13,11 @@ import { type Notes, type Topic } from "~/types/public.types";
 
 const NoteTaker: React.FC = () => {
   const dispatch = useDispatch();
-
+  const [topicInput, setTopicInput] = useState("");
   const topics = useSelector((state: RootState) => state.publicStore.topics);
 
   const [selectedTopic, setSelectedTopic] = useState<Topic | null>(null);
-  const [notes, setNotes] = useState<Notes[] | null>(null);
+  const [notes, setNotes] = useState<Notes[]>([]);
 
   const refreshNotes = () => {
     topics.forEach((topic) => {
@@ -25,6 +25,24 @@ const NoteTaker: React.FC = () => {
     });
   };
 
+  const createTopic = () => {
+    if (topics.length === 5) return;
+    const topic: Topic = {
+      id: uuidv4(),
+      title: topicInput,
+      note: [],
+    };
+    dispatch(setTopics(topic));
+    setTopicInput("");
+  };
+
+  const createNote = (note: Pick<Notes, "title" | "content">) => {
+    if (notes.length === 5) return;
+    if (selectedTopic) {
+      const newNote = { ...note, id: uuidv4() };
+      dispatch(addNote({ id: selectedTopic.id, note: newNote }));
+    }
+  };
   useEffect(() => refreshNotes(), [topics]);
 
   return (
@@ -32,20 +50,11 @@ const NoteTaker: React.FC = () => {
       <div className="col-span-4 pt-5 sm:col-span-1 ">
         <div className="relative">
           <input
+            value={topicInput}
+            onChange={(e) => setTopicInput(e.currentTarget.value)}
             type="text"
             className="w-full rounded-md border border-gray-300 py-2 pl-10 pr-4 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500 sm:text-sm"
             placeholder="New Topic"
-            onKeyDown={(e) => {
-              if (e.key === "Enter") {
-                const topic: Topic = {
-                  id: uuidv4(),
-                  title: e.currentTarget.value,
-                  note: [],
-                };
-                dispatch(setTopics(topic));
-                e.currentTarget.value = "";
-              }
-            }}
           />
           <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
             <DocumentPlusIcon
@@ -54,6 +63,14 @@ const NoteTaker: React.FC = () => {
             />
           </div>
         </div>
+        <button
+          disabled={topics.length === 5 ?? false}
+          className="btn-primary btn-sm btn mt-2  w-full rounded-md "
+          onClick={() => createTopic()}
+        >
+          Add Topic
+        </button>
+
         <div className="divider"></div>
         <ul className="w-100 menu rounded-box bg-base-100">
           {topics.length > 0 &&
@@ -76,30 +93,22 @@ const NoteTaker: React.FC = () => {
       </div>
       <div className="col-span-4 gap-3 sm:col-span-3 ">
         <div>
-          {notes &&
-            notes.map((note, idx) => (
-              <div key={`note-${idx}`} className="mt-5">
-                <NoteCard
-                  note={note}
-                  onDelete={() => {
-                    if (!selectedTopic) return;
-                    dispatch(
-                      deleteNote({ topicId: selectedTopic.id, noteId: note.id })
-                    );
-                  }}
-                />
-              </div>
-            ))}
+          {notes.map((note, idx) => (
+            <div key={`note-${idx}`} className="mt-5">
+              <NoteCard
+                note={note}
+                onDelete={() => {
+                  if (!selectedTopic) return;
+                  dispatch(
+                    deleteNote({ topicId: selectedTopic.id, noteId: note.id })
+                  );
+                }}
+              />
+            </div>
+          ))}
         </div>
 
-        <NoteEditor
-          onSave={(note) => {
-            if (selectedTopic) {
-              const newNote = { ...note, id: uuidv4() };
-              dispatch(addNote({ id: selectedTopic.id, note: newNote }));
-            }
-          }}
-        />
+        {notes.length !== 5 && <NoteEditor onSave={createNote} />}
       </div>
     </div>
   );
