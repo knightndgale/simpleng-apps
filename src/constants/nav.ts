@@ -7,7 +7,7 @@ import {
 
 const Nav = [
   {
-    title: "",
+    title: "Home",
     path: "/",
     Icon: HomeIcon,
   },
