@@ -12,7 +12,7 @@ const Navbar = () => {
 
   return (
     <div className="navbar bg-primary text-primary-content">
-      <div className="flex-1 justify-end sm:justify-start">
+      <div className="flex-1">
         <div className="flex items-center justify-between sm:justify-start">
           <ul className="ml-2  hidden flex-wrap gap-3 sm:inline-flex">
             {Navigations.map(({ path, title, Icon }, index) => (
@@ -34,7 +34,7 @@ const Navbar = () => {
           </ul>
 
           {/* Show the hamburger icon on mobile screens */}
-          <button className="mr-3 sm:hidden" onClick={() => setIsOpen(true)}>
+          <button className="ml-3 sm:hidden" onClick={() => setIsOpen(true)}>
             <Hamburger className="h-6 w-6 fill-current text-white" />
           </button>
         </div>
