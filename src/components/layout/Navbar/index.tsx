@@ -35,7 +35,7 @@ const Navbar = () => {
           </ul>
 
           {/* Show the hamburger icon on mobile screens */}
-          <button className="sm:hidden">
+          <button className="mr-3 sm:hidden">
             <Hamburger className="h-6 w-6 fill-current text-white" />
           </button>
         </div>

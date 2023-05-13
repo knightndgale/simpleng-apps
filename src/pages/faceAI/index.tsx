@@ -56,7 +56,7 @@ const FaceAI: React.FC = () => {
 
   return (
     <div className="grid min-h-fit grid-cols-4 gap-2">
-      <div className="col-span-1  pt-5">
+      <div className="col-span-4 pt-5 sm:col-span-1 ">
         <div className="relative">
           <input
             ref={fileInputRef}
@@ -80,8 +80,8 @@ const FaceAI: React.FC = () => {
         )}
       </div>
 
-      <div className="col-span-3 flex flex-wrap  gap-3 p-5  ">
-        <div className="relative">
+      <div className="col-span-4 gap-3 sm:col-span-3 ">
+        <div className="relative sm:mt-5">
           <img
             ref={imageRef}
             loading="lazy"

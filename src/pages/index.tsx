@@ -3,22 +3,19 @@ import { useRouter } from "next/router";
 const Home: React.FC = () => {
   const router = useRouter();
   return (
-    <div className="flex justify-center py-20  align-middle">
-      <div className="flex bg-stone-900 " />
-      <div className=" h-80 w-9/12 flex-col justify-center self-center text-center align-middle">
-        <h1 className="mb-5 text-5xl font-bold text-primary">
+    <div className="flex justify-center py-20">
+      <div className=" flex-col justify-center self-center text-center sm:w-9/12">
+        <h1 className="mb-5 text-4xl font-bold text-primary md:text-5xl lg:text-6xl">
           Welcome to Simpleng Apps!
         </h1>
-        <p className="mb-16  text-secondary-content">
+        <p className="mb-16 text-sm text-secondary-content md:text-base lg:text-lg">
           Ready to enter the exciting world of web apps? Look no further than
           our collection of{" "}
           <span className="font-semibold">
-            {" "}
-            NextJs, Prisma, Postgresql, useQuery, and Redux-powered{" "}
+            NextJs, Prisma, Postgresql, useQuery, and Redux-powered
           </span>{" "}
           creations! Curated by{" "}
           <span className="font-semibold">
-            {" "}
             Mark Dave Soriano and the Innoendo IT Solutions team
           </span>
           , our web apps are the perfect blend of fun and functionality. Come

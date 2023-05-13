@@ -29,7 +29,7 @@ const NoteTaker: React.FC = () => {
 
   return (
     <div className="grid grid-cols-4 gap-2">
-      <div className="col-span-1 pt-5">
+      <div className="col-span-4 pt-5 sm:col-span-1 ">
         <div className="relative">
           <input
             type="text"
@@ -74,7 +74,7 @@ const NoteTaker: React.FC = () => {
             ))}
         </ul>
       </div>
-      <div className="col-span-3">
+      <div className="col-span-4 gap-3 sm:col-span-3 ">
         <div>
           {notes &&
             notes.map((note, idx) => (

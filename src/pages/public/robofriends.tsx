@@ -48,8 +48,8 @@ const Robofriends = () => {
   }, []);
 
   return (
-    <div className="grid max-h-screen grid-cols-4 gap-2">
-      <div className="col-span-1  hidden max-h-screen pt-5 sm:block ">
+    <div className="grid  grid-cols-4 gap-2">
+      <div className="col-span-4  pt-5 sm:col-span-1 ">
         <div className="relative">
           <input
             type="text"
@@ -92,34 +92,36 @@ const Robofriends = () => {
         )}
       </div>
 
-      <div className="col-span-12 flex max-h-screen flex-wrap gap-3 overflow-y-auto p-5 sm:col-span-3">
-        {robots.length > 0 ? (
-          robots.map((robot, index) => (
-            <div
-              key={`robocards-${index}`}
-              className="h-75  w-full px-3 sm:w-full md:w-5/12 lg:w-4/12 xl:w-3/12"
-            >
-              <div className="card rounded-lg bg-secondary shadow-lg transition ease-in-out hover:-translate-y-1  hover:scale-105">
-                <figure className="px-10 pt-10">
-                  <div className="avatar">
-                    <div className="w-24 rounded-full bg-secondary-content">
-                      <img
-                        loading="lazy"
-                        src={`https://robohash.org/${robot.name || ""}`}
-                        alt={robot.name || "robofriend-friend"}
-                      />
+      <div className="soverflow-y-auto  col-span-4 sm:col-span-3">
+        <div className={"my-5  flex flex-wrap gap-3 "}>
+          {robots.length > 0 ? (
+            robots.map((robot, index) => (
+              <div
+                key={`robocards-${index}`}
+                className="  w-full sm:w-full md:w-5/12 lg:w-2/5 xl:w-1/5"
+              >
+                <div className="card h-full rounded-lg bg-secondary shadow-lg transition ease-in-out hover:-translate-y-1  hover:scale-105">
+                  <figure className="px-10 pt-10">
+                    <div className="avatar">
+                      <div className="w-24 rounded-full bg-secondary-content">
+                        <img
+                          loading="lazy"
+                          src={`https://robohash.org/${robot.name || ""}`}
+                          alt={robot.name || "robofriend-friend"}
+                        />
+                      </div>
                     </div>
+                  </figure>
+                  <div className="card-body items-center text-center">
+                    <h2 className="card-title">{robot.name}</h2>
                   </div>
-                </figure>
-                <div className="card-body items-center text-center">
-                  <h2 className="card-title">{robot.name}</h2>
                 </div>
               </div>
-            </div>
-          ))
-        ) : (
-          <RobofriendCardSkeleton length={8} />
-        )}
+            ))
+          ) : (
+            <RobofriendCardSkeleton length={8} />
+          )}
+        </div>
       </div>
     </div>
   );
