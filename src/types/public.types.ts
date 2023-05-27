@@ -1,4 +1,4 @@
-import { type Note, type User } from "@prisma/client";
+import { type Note as PrismaNote, type User } from "@prisma/client";
 import { type Clarifai } from "./clarifai.types";
 import { type Robot } from "./robofriends.types";
 
@@ -12,7 +12,12 @@ export interface PublicReduxInterface {
 export type Topic = {
   id: string;
   title: string;
-  note: Notes[];
+  note: Note[];
 };
 
-export type Notes = Pick<Note, "title" | "content" | "id">;
+export type EditNote = {
+  topicId: string;
+  note: Note;
+};
+
+export type Note = Pick<PrismaNote, "title" | "content" | "id">;

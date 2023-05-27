@@ -100,14 +100,16 @@ const NoteTaker: React.FC = () => {
       </SideContent>
       <Content>
         <>
-          {notes?.map((note) => (
-            <div key={note.id} className="mt-5">
-              <NoteCard
-                note={note}
-                onDelete={() => void deleteNote.mutate({ id: note.id })}
-              />
-            </div>
-          ))}
+          {selectedTopic &&
+            notes?.map((note) => (
+              <div key={note.id} className="mt-5">
+                <NoteCard
+                  topicId={selectedTopic.id}
+                  note={note}
+                  onDelete={() => void deleteNote.mutate({ id: note.id })}
+                />
+              </div>
+            ))}
 
           <NoteEditor
             onSave={({ title, content }) => {

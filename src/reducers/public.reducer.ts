@@ -3,7 +3,8 @@ import { createSlice, type PayloadAction } from "@reduxjs/toolkit";
 import {
   type Topic,
   type PublicReduxInterface,
-  type Notes,
+  type EditNote,
+  type Note,
 } from "~/types/public.types";
 import { type Robot } from "~/types/robofriends.types";
 
@@ -28,12 +29,29 @@ const publicSlice = createSlice({
       state.topics.push(action.payload as Topic);
     },
     addNote(state, action) {
-      const { id, note } = action.payload as { id: string; note: Notes };
+      const { id, note } = action.payload as { id: string; note: Note };
       state.topics.map((topic) => {
         if (topic.id === id) {
           topic.note.push(note);
         }
       });
+    },
+    editNote(state, action) {
+      const { topicId, note } = action.payload as EditNote;
+      console.log(action.payload);
+      const updatedTopics = state.topics.map((topic) => {
+        if (topic.id === topicId) {
+          return {
+            ...topic,
+            note: topic.note.map((topicNote) =>
+              topicNote.id === note.id ? { ...note } : topicNote
+            ),
+          };
+        }
+        return topic;
+      });
+
+      state.topics = updatedTopics;
     },
     deleteNote(state, action) {
       const { topicId, noteId } = action.payload as {
@@ -76,5 +94,6 @@ export const {
   addNote,
   deleteNote,
   deleteTopic,
+  editNote,
 } = publicSlice.actions;
 export default publicSlice.reducer;

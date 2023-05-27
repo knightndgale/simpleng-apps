@@ -1,18 +1,22 @@
-/* eslint-disable @typescript-eslint/no-unsafe-call */
-/* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import { useState } from "react";
 
 import CodeMirror from "@uiw/react-codemirror";
 import { markdown, markdownLanguage } from "@codemirror/lang-markdown";
 import { languages } from "@codemirror/language-data";
+import { type Note } from "~/types/public.types";
 
+interface NoteEditor {
+  onSave: (note: { title: string; content: string }) => void;
+  extraButton?: React.ReactElement | React.ReactNode | undefined;
+  contentValue?: Omit<Note, "id">;
+}
 const NoteEditor = ({
   onSave,
-}: {
-  onSave: (note: { title: string; content: string }) => void;
-}) => {
-  const [code, setCode] = useState<string>("");
-  const [title, setTitle] = useState<string>("");
+  extraButton = undefined,
+  contentValue,
+}: NoteEditor) => {
+  const [content, setContent] = useState<string>(contentValue?.content ?? "");
+  const [title, setTitle] = useState<string>(contentValue?.title ?? "");
 
   return (
     <div className="card border border-gray-200 bg-base-100 shadow-xl">
@@ -27,32 +31,34 @@ const NoteEditor = ({
           />
         </h2>
         <CodeMirror
-          value={code}
+          value={content}
           width="100%"
           height="30vh"
           minHeight="30vh"
           extensions={[
             markdown({ base: markdownLanguage, codeLanguages: languages }),
           ]}
-          onChange={(value: string) => setCode(value)}
+          onChange={(value: string) => setContent(value)}
           className="border border-gray-300"
         />
       </div>
-      <div className="card-actions justify-end">
+
+      <div className="card-actions mx-7 mb-5 flex justify-end">
         <button
           onClick={() => {
             onSave({
               title,
-              content: code,
+              content,
             });
-            setCode("");
+            setContent("");
             setTitle("");
           }}
-          className="btn-primary btn-md btn m-5 w-40"
-          disabled={title.trim().length === 0 || code.trim().length === 0}
+          className="btn-primary btn-md btn w-40"
+          disabled={title.trim().length === 0 || content.trim().length === 0}
         >
           Save
         </button>
+        {extraButton}
       </div>
     </div>
   );

@@ -23,7 +23,7 @@ import SideContent from "~/components/layout/SideContent";
 import Content from "~/components/layout/Content";
 
 import { type RootState } from "~/store/root.store";
-import { type Notes, type Topic } from "~/types/public.types";
+import { type Note, type Topic } from "~/types/public.types";
 
 const NoteTaker: React.FC = () => {
   const dispatch = useDispatch();
@@ -33,14 +33,7 @@ const NoteTaker: React.FC = () => {
   const [selectedTopic, setSelectedTopic] = useState<Topic | null | undefined>(
     currentTopic
   );
-  const [notes, setNotes] = useState<Notes[]>([]);
-
-  const refreshNotes = () => {
-    setSelectedTopic(topics.at(-1));
-    topics.forEach((topic) => {
-      if (topic.id === selectedTopic?.id) setNotes(topic.note);
-    });
-  };
+  const [notes, setNotes] = useState<Note[]>([]);
 
   const createTopic = () => {
     if (topics.length === 5) return;
@@ -51,9 +44,18 @@ const NoteTaker: React.FC = () => {
     };
     dispatch(setTopics(topic));
     setTopicInput("");
+    setSelectedTopic(topic);
   };
 
-  const createNote = (note: Pick<Notes, "title" | "content">) => {
+  const deleteCurrentTopic = (topicId: string) => {
+    dispatch(deleteTopic(topicId));
+    if (selectedTopic && selectedTopic.id === topicId) {
+      const remainingTopics = topics.filter((topic) => topic.id !== topicId);
+      setSelectedTopic(remainingTopics.length > 0 ? remainingTopics[0] : null);
+    }
+  };
+
+  const createNote = (note: Pick<Note, "title" | "content">) => {
     if (notes.length === 5) return;
     if (selectedTopic) {
       const newNote = { ...note, id: uuidv4() };
@@ -61,7 +63,12 @@ const NoteTaker: React.FC = () => {
     }
   };
 
-  useEffect(() => refreshNotes(), [topics]);
+  useEffect(() => {
+    const updatedTopic = selectedTopic
+      ? topics.find((topic) => topic.id === selectedTopic.id)
+      : null;
+    setNotes(updatedTopic?.note || []);
+  }, [topics, selectedTopic]);
 
   return (
     <MainContainer>
@@ -84,7 +91,7 @@ const NoteTaker: React.FC = () => {
         <button
           disabled={topics.length === 5 ?? false}
           className="btn-primary btn-sm btn mt-2  w-full rounded-md "
-          onClick={() => createTopic()}
+          onClick={createTopic}
         >
           Add Topic
         </button>
@@ -108,7 +115,6 @@ const NoteTaker: React.FC = () => {
                     setSelectedTopic(topic);
                     event.preventDefault();
                   }}
-                  className="peer"
                 >
                   <span className="block w-56 overflow-hidden text-ellipsis whitespace-nowrap sm:w-24 md:w-32 lg:w-52 xl:w-60">
                     {topic.title}
@@ -119,11 +125,7 @@ const NoteTaker: React.FC = () => {
                     selectedTopic?.id === topic.id ? "block" : "hidden"
                   }`}
                   aria-hidden="true"
-                  onClick={() => {
-                    dispatch(deleteTopic(topic.id));
-                    if (topics.length > 0) return setSelectedTopic(null);
-                    setSelectedTopic(topics[0]);
-                  }}
+                  onClick={() => deleteCurrentTopic(topic.id)}
                 />
               </li>
             ))}
@@ -137,19 +139,21 @@ const NoteTaker: React.FC = () => {
             </h3>
           )}
 
-          {notes.map((note, idx) => (
-            <section key={`note-${idx}`} className="mb-5">
-              <NoteCard
-                note={note}
-                onDelete={() => {
-                  if (!selectedTopic) return;
-                  dispatch(
-                    deleteNote({ topicId: selectedTopic.id, noteId: note.id })
-                  );
-                }}
-              />
-            </section>
-          ))}
+          {selectedTopic &&
+            notes.map((note, idx) => (
+              <section key={`note-${idx}`} className="mb-5">
+                <NoteCard
+                  note={note}
+                  topicId={selectedTopic.id}
+                  onDelete={() => {
+                    if (!selectedTopic) return;
+                    dispatch(
+                      deleteNote({ topicId: selectedTopic.id, noteId: note.id })
+                    );
+                  }}
+                />
+              </section>
+            ))}
 
           {notes.length !== 5 && topics.length > 0 ? (
             <NoteEditor onSave={createNote} />
