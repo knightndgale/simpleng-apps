@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import { useRouter } from "next/router";
-import { useEffect, useState } from "react";
-import useGeoCoordinates from "~/hooks/GeoCoordinates";
+import { useEffect } from "react";
+import useGeoCoordinates from "~/hooks/useGeoCoordinates";
 
 const Home: React.FC = () => {
   const { coordinates } = useGeoCoordinates();
