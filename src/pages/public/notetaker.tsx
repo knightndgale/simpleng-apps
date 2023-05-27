@@ -103,11 +103,10 @@ const NoteTaker: React.FC = () => {
       </SideContent>
       <Content>
         <>
-          <div className="mb-5 hidden bg-secondary p-5 sm:block">
-            <h3 className="w-100 whitespace-wrap overflow-hidden text-ellipsis text-lg text-secondary-content   sm:text-xl md:text-2xl lg:text-3xl xl:text-4xl">
-              {selectedTopic?.title}
-            </h3>
-          </div>
+          <h3 className="w-100 whitespace-wrap mb-5 hidden overflow-hidden text-ellipsis text-lg text-secondary-content sm:block   sm:text-xl md:text-2xl lg:text-3xl xl:text-4xl">
+            {selectedTopic?.title}
+          </h3>
+
           {notes.map((note, idx) => (
             <div key={`note-${idx}`}>
               <NoteCard
