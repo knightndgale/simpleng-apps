@@ -1,20 +1,14 @@
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
-import GetCompleteGeoLocation from "~/helper/OpenCageApi";
-import GeoCoordinates, { type Coordinates } from "~/hooks/GeoCoordinates";
-// const {coordinates} = useGeoCoordinates();
+import useGeoCoordinates from "~/hooks/GeoCoordinates";
 
 const Home: React.FC = () => {
-  const { coordinates, error } = GeoCoordinates();
+  const { coordinates } = useGeoCoordinates();
 
   useEffect(() => {
     if (coordinates) {
       console.log(coordinates);
-      const locDetails = GetCompleteGeoLocation(coordinates).then(
-        (res) => res as unknown
-      );
-      console.log(locDetails);
     }
   }, [coordinates]);
 
