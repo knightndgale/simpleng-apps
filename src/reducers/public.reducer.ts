@@ -38,7 +38,6 @@ const publicSlice = createSlice({
     },
     editNote(state, action) {
       const { topicId, note } = action.payload as EditNote;
-      console.log(action.payload);
       const updatedTopics = state.topics.map((topic) => {
         if (topic.id === topicId) {
           return {
