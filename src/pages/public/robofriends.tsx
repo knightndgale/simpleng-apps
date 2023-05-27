@@ -82,8 +82,8 @@ const Robofriends = () => {
               </div>
             </div>
 
-            <article className="prose flex flex-col items-center  justify-center text-center">
-              <p className="mt-5 leading-tight">
+            <article className="prose  flex flex-col items-center  justify-center text-center">
+              <p className="mt-5 leading-tight ">
                 <strong>{user.name} </strong>
                 <br />
                 {user.email}
@@ -101,7 +101,7 @@ const Robofriends = () => {
                 key={`robocards-${index}`}
                 className="  w-full sm:w-full md:w-5/12 lg:w-2/5 xl:w-1/5"
               >
-                <div className="card h-full rounded-lg bg-primary shadow-lg transition ease-in-out hover:-translate-y-1  hover:scale-105">
+                <div className="card h-full rounded-lg bg-secondary shadow-lg transition ease-in-out hover:-translate-y-1  hover:scale-105">
                   <figure className="px-10 pt-10">
                     <div className="avatar">
                       <div className="w-24 rounded-full bg-primary-content">
@@ -114,7 +114,9 @@ const Robofriends = () => {
                     </div>
                   </figure>
                   <div className="card-body items-center text-center">
-                    <h2 className="card-title">{robot.name}</h2>
+                    <h2 className="card-title text-secondary-content">
+                      {robot.name}
+                    </h2>
                   </div>
                 </div>
               </div>
