@@ -9,6 +9,9 @@ import NoteCard from "~/components/noteCard";
 import NoteEditor from "~/components/noteEditor";
 import { type RouterOutputs, api } from "~/utils/api";
 import { authOptions } from "~/server/auth";
+import MainContainer from "~/components/layout/MainContainer";
+import Content from "~/components/layout/Content";
+import SideContent from "~/components/layout/SideContent";
 
 type Topic = RouterOutputs["topic"]["getAll"][0];
 
@@ -55,8 +58,8 @@ const NoteTaker: React.FC = () => {
   });
 
   return (
-    <div className="grid grid-cols-4 gap-2">
-      <div className="col-span-1 pt-5">
+    <MainContainer>
+      <SideContent>
         <div className="relative">
           <input
             type="text"
@@ -94,9 +97,9 @@ const NoteTaker: React.FC = () => {
             </li>
           ))}
         </ul>
-      </div>
-      <div className="col-span-3">
-        <div>
+      </SideContent>
+      <Content>
+        <>
           {notes?.map((note) => (
             <div key={note.id} className="mt-5">
               <NoteCard
@@ -105,19 +108,19 @@ const NoteTaker: React.FC = () => {
               />
             </div>
           ))}
-        </div>
 
-        <NoteEditor
-          onSave={({ title, content }) => {
-            void createNote.mutate({
-              title,
-              content,
-              topicId: selectedTopic?.id ?? "",
-            });
-          }}
-        />
-      </div>
-    </div>
+          <NoteEditor
+            onSave={({ title, content }) => {
+              void createNote.mutate({
+                title,
+                content,
+                topicId: selectedTopic?.id ?? "",
+              });
+            }}
+          />
+        </>
+      </Content>
+    </MainContainer>
   );
 };
 

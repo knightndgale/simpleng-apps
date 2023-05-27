@@ -19,14 +19,14 @@ const Navbar = () => {
               <li className="p-2" key={`${title || "nav"}-#${index}`}>
                 <a
                   onClick={() => void router.push(`${path || ""}`)}
-                  className={` text-indigo-100  ${
+                  className={` ${
                     router.pathname === path ||
                     router.pathname === `/${PUBLIC}${path || ""}`
                       ? "font-bold"
                       : ""
                   } inline-flex gap-3 align-top text-sm transition ease-in-out hover:scale-105 hover:cursor-pointer`}
                 >
-                  <Icon className="h-5 w-5" color="white" />
+                  <Icon className="h-5 w-5" />
                   {title}
                 </a>
               </li>

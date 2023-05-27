@@ -15,6 +15,9 @@ import {
   RobofriendProfileCardSkeleton,
 } from "../robofriends";
 import { generateUser, getRobots } from "~/utils/generateRandomData";
+import MainContainer from "~/components/layout/MainContainer";
+import SideContent from "~/components/layout/SideContent";
+import Content from "~/components/layout/Content";
 
 const Robofriends = () => {
   const dispatch = useDispatch();
@@ -48,12 +51,12 @@ const Robofriends = () => {
   }, []);
 
   return (
-    <div className="grid  grid-cols-4 gap-2">
-      <div className="col-span-4  pt-5 sm:col-span-1 ">
+    <MainContainer>
+      <SideContent>
         <div className="relative">
           <input
             type="text"
-            className="w-full rounded-md border border-gray-300 py-2 pl-10 pr-4 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500 sm:text-sm"
+            className="w-full rounded-md border border-gray-300 py-2 pl-10 pr-4 focus:border-primary-focus focus:outline-none focus:ring-2 focus:ring-primary sm:text-sm"
             placeholder="Search"
             onChange={handleSearchChange}
           />
@@ -66,10 +69,10 @@ const Robofriends = () => {
         </div>
         <div className="divider"></div>
 
-        {robots.length > 0 && user ? (
+        {user && (
           <div className="flex flex-col items-center justify-center ">
             <div className="avatar">
-              <div className="w-24 rounded-full bg-secondary-content">
+              <div className="w-24 rounded-full bg-primary-content">
                 <img
                   loading="lazy"
                   src={`https://robohash.org/${user.name || "simpleng-apps"})
@@ -87,23 +90,21 @@ const Robofriends = () => {
               </p>
             </article>
           </div>
-        ) : (
-          <RobofriendProfileCardSkeleton />
         )}
-      </div>
+      </SideContent>
 
-      <div className="soverflow-y-auto  col-span-4 sm:col-span-3">
-        <div className={"my-5  flex flex-wrap gap-3 "}>
-          {robots.length > 0 ? (
+      <Content>
+        <div className={" flex flex-wrap gap-3 "}>
+          {robots.length > 0 &&
             robots.map((robot, index) => (
               <div
                 key={`robocards-${index}`}
                 className="  w-full sm:w-full md:w-5/12 lg:w-2/5 xl:w-1/5"
               >
-                <div className="card h-full rounded-lg bg-secondary shadow-lg transition ease-in-out hover:-translate-y-1  hover:scale-105">
+                <div className="card h-full rounded-lg bg-primary shadow-lg transition ease-in-out hover:-translate-y-1  hover:scale-105">
                   <figure className="px-10 pt-10">
                     <div className="avatar">
-                      <div className="w-24 rounded-full bg-secondary-content">
+                      <div className="w-24 rounded-full bg-primary-content">
                         <img
                           loading="lazy"
                           src={`https://robohash.org/${robot.name || ""}`}
@@ -117,13 +118,10 @@ const Robofriends = () => {
                   </div>
                 </div>
               </div>
-            ))
-          ) : (
-            <RobofriendCardSkeleton length={8} />
-          )}
+            ))}
         </div>
-      </div>
-    </div>
+      </Content>
+    </MainContainer>
   );
 };
 

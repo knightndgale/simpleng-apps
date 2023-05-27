@@ -10,13 +10,18 @@ import NoteEditor from "~/components/noteEditor";
 import { authOptions } from "~/server/auth";
 import { type RootState } from "~/store/root.store";
 import { type Notes, type Topic } from "~/types/public.types";
+import MainContainer from "~/components/layout/MainContainer";
+import SideContent from "~/components/layout/SideContent";
+import Content from "~/components/layout/Content";
 
 const NoteTaker: React.FC = () => {
   const dispatch = useDispatch();
   const [topicInput, setTopicInput] = useState("");
   const topics = useSelector((state: RootState) => state.publicStore.topics);
-
-  const [selectedTopic, setSelectedTopic] = useState<Topic | null>(null);
+  const currentTopic = topics.length > 0 ? topics[0] : null;
+  const [selectedTopic, setSelectedTopic] = useState<Topic | null | undefined>(
+    currentTopic
+  );
   const [notes, setNotes] = useState<Notes[]>([]);
 
   const refreshNotes = () => {
@@ -46,14 +51,14 @@ const NoteTaker: React.FC = () => {
   useEffect(() => refreshNotes(), [topics]);
 
   return (
-    <div className="grid grid-cols-4 gap-2">
-      <div className="col-span-4 pt-5 sm:col-span-1 ">
+    <MainContainer>
+      <SideContent>
         <div className="relative">
           <input
             value={topicInput}
             onChange={(e) => setTopicInput(e.currentTarget.value)}
             type="text"
-            className="w-full rounded-md border border-gray-300 py-2 pl-10 pr-4 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500 sm:text-sm"
+            className="w-full rounded-md border border-gray-300 py-2 pl-10 pr-4 focus:border-primary-focus focus:outline-none focus:ring-2 focus:ring-primary sm:text-sm"
             placeholder="New Topic"
           />
           <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
@@ -72,10 +77,13 @@ const NoteTaker: React.FC = () => {
         </button>
 
         <div className="divider"></div>
-        <ul className="w-100 menu rounded-box bg-base-100">
+        <ul className="menu bg-base-100">
           {topics.length > 0 &&
             topics?.map((topic) => (
-              <li key={topic.id}>
+              <li
+                key={topic.id}
+                className={selectedTopic?.id === topic.id ? "bordered" : ""}
+              >
                 <a
                   className="justify-between"
                   href="#"
@@ -85,16 +93,22 @@ const NoteTaker: React.FC = () => {
                     event.preventDefault();
                   }}
                 >
-                  {topic.title}
+                  <span className="block w-56 overflow-hidden text-ellipsis whitespace-nowrap sm:w-32 md:w-40 lg:w-60 ">
+                    {topic.title}
+                  </span>
                 </a>
               </li>
             ))}
         </ul>
-      </div>
-      <div className="col-span-4 gap-3 sm:col-span-3 ">
-        <div>
+      </SideContent>
+      <Content>
+        <>
+          <h3 className="w-100 whitespace-wrap hidden overflow-hidden text-ellipsis text-lg  sm:block sm:text-xl md:text-2xl lg:text-3xl xl:text-4xl">
+            {selectedTopic?.title}
+          </h3>
+
           {notes.map((note, idx) => (
-            <div key={`note-${idx}`} className="mt-5">
+            <div key={`note-${idx}`}>
               <NoteCard
                 note={note}
                 onDelete={() => {
@@ -106,11 +120,11 @@ const NoteTaker: React.FC = () => {
               />
             </div>
           ))}
-        </div>
 
-        {notes.length !== 5 && <NoteEditor onSave={createNote} />}
-      </div>
-    </div>
+          {notes.length !== 5 && <NoteEditor onSave={createNote} />}
+        </>
+      </Content>
+    </MainContainer>
   );
 };
 

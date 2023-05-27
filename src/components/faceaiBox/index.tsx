@@ -11,10 +11,9 @@ const FaceAIBox = ({ boundigBox, imageHeight, imageWidth }: Box) => {
   if (imageWidth === 0 || imageHeight === 0) return <></>;
   return (
     <div
-      className="absolute flex cursor-pointer flex-wrap justify-center border-2 border-blue-500"
+      className="absolute flex cursor-pointer flex-wrap justify-center border-4 border-primary-focus"
       style={{
         ...box,
-        boxShadow: `0 0 0 3px #149df2 inset`,
       }}
     />
   );

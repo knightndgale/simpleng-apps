@@ -1,3 +1,7 @@
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
+/* eslint-disable @typescript-eslint/restrict-template-expressions */
+/* eslint-disable @typescript-eslint/no-unsafe-member-access */
+/* eslint-disable @typescript-eslint/no-unsafe-return */
 /* eslint-disable @next/next/no-img-element */
 import React, { useCallback, useState } from "react";
 import { MagnifyingGlassIcon } from "@heroicons/react/24/solid";
@@ -7,12 +11,12 @@ import { useDispatch, useSelector } from "react-redux";
 import { type GetServerSideProps, type GetServerSidePropsContext } from "next";
 
 import { api } from "~/utils/api";
-import { type RootState } from "~/store/root.store";
 
 import { setRobots, searchRobots } from "~/reducers/robofriends.reducer";
 import { getServerSession } from "next-auth";
 import { authOptions } from "~/server/auth";
 import { PUBLIC } from "~/constants/common";
+import { type RootState } from "~/store/root.store";
 
 export type UserWithoutEmail = Omit<User, "email">;
 const Robofriends = () => {
