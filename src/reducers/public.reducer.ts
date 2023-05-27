@@ -46,7 +46,11 @@ const publicSlice = createSlice({
         }
       });
     },
-
+    deleteTopic(state, action) {
+      state.topics = state.topics.filter(
+        (topic) => topic.id !== action.payload
+      );
+    },
     setUser(state, action) {
       state.user = action.payload as Partial<Pick<User, "email" | "name">>;
     },
@@ -71,5 +75,6 @@ export const {
   setUser,
   addNote,
   deleteNote,
+  deleteTopic,
 } = publicSlice.actions;
 export default publicSlice.reducer;

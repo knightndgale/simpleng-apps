@@ -1,18 +1,29 @@
-import { DocumentPlusIcon } from "@heroicons/react/24/solid";
+import { DocumentPlusIcon, TrashIcon } from "@heroicons/react/24/solid";
 import { v4 as uuidv4 } from "uuid";
 import { useEffect, useState } from "react";
 import { type GetServerSideProps, type GetServerSidePropsContext } from "next";
 import { getServerSession } from "next-auth";
 import { useDispatch, useSelector } from "react-redux";
-import { setTopics, addNote, deleteNote } from "~/reducers/public.reducer";
+import Image from "next/image";
+import NoteTakerFallback from "~/images/stock/notes-fallback.jpeg";
+
+import { authOptions } from "~/server/auth";
+
+import {
+  setTopics,
+  addNote,
+  deleteNote,
+  deleteTopic,
+} from "~/reducers/public.reducer";
 import NoteCard from "~/components/noteCard";
 import NoteEditor from "~/components/noteEditor";
-import { authOptions } from "~/server/auth";
-import { type RootState } from "~/store/root.store";
-import { type Notes, type Topic } from "~/types/public.types";
+
 import MainContainer from "~/components/layout/MainContainer";
 import SideContent from "~/components/layout/SideContent";
 import Content from "~/components/layout/Content";
+
+import { type RootState } from "~/store/root.store";
+import { type Notes, type Topic } from "~/types/public.types";
 
 const NoteTaker: React.FC = () => {
   const dispatch = useDispatch();
@@ -25,6 +36,7 @@ const NoteTaker: React.FC = () => {
   const [notes, setNotes] = useState<Notes[]>([]);
 
   const refreshNotes = () => {
+    setSelectedTopic(topics.at(-1));
     topics.forEach((topic) => {
       if (topic.id === selectedTopic?.id) setNotes(topic.note);
     });
@@ -48,6 +60,7 @@ const NoteTaker: React.FC = () => {
       dispatch(addNote({ id: selectedTopic.id, note: newNote }));
     }
   };
+
   useEffect(() => refreshNotes(), [topics]);
 
   return (
@@ -77,38 +90,55 @@ const NoteTaker: React.FC = () => {
         </button>
 
         <div className="divider"></div>
-        <ul className="menu bg-base-100">
+        <ul className="bg-base-100">
           {topics.length > 0 &&
             topics?.map((topic) => (
               <li
                 key={topic.id}
-                className={selectedTopic?.id === topic.id ? "bordered" : ""}
+                className={`mb-2 flex flex-row justify-between p-3  ${
+                  selectedTopic?.id === topic.id
+                    ? "border-l-4 border-primary-focus bg-primary-content"
+                    : ""
+                }`}
               >
                 <a
-                  className="justify-between"
                   href="#"
                   onClick={(event) => {
                     setNotes(topic.note);
                     setSelectedTopic(topic);
                     event.preventDefault();
                   }}
+                  className="peer"
                 >
-                  <span className="block w-56 overflow-hidden text-ellipsis whitespace-nowrap sm:w-32 md:w-40 lg:w-60 ">
+                  <span className="block w-56 overflow-hidden text-ellipsis whitespace-nowrap sm:w-24 md:w-32 lg:w-52 xl:w-60">
                     {topic.title}
                   </span>
                 </a>
+                <TrashIcon
+                  className={`h-5 w-5 self-center text-error hover:cursor-pointer ${
+                    selectedTopic?.id === topic.id ? "block" : "hidden"
+                  }`}
+                  aria-hidden="true"
+                  onClick={() => {
+                    dispatch(deleteTopic(topic.id));
+                    if (topics.length > 0) return setSelectedTopic(null);
+                    setSelectedTopic(topics[0]);
+                  }}
+                />
               </li>
             ))}
         </ul>
       </SideContent>
       <Content>
         <>
-          <h3 className="w-100 whitespace-wrap mb-5 hidden overflow-hidden text-ellipsis text-lg text-secondary-content sm:block   sm:text-xl md:text-2xl lg:text-3xl xl:text-4xl">
-            {selectedTopic?.title}
-          </h3>
+          {selectedTopic?.title && (
+            <h3 className="w-100 whitespace-wrap mb-5 hidden overflow-hidden text-ellipsis text-lg text-secondary-content sm:block   sm:text-xl md:text-2xl lg:text-3xl xl:text-4xl">
+              {selectedTopic?.title}
+            </h3>
+          )}
 
           {notes.map((note, idx) => (
-            <div key={`note-${idx}`}>
+            <section key={`note-${idx}`} className="mb-5">
               <NoteCard
                 note={note}
                 onDelete={() => {
@@ -118,10 +148,18 @@ const NoteTaker: React.FC = () => {
                   );
                 }}
               />
-            </div>
+            </section>
           ))}
 
-          {notes.length !== 5 && <NoteEditor onSave={createNote} />}
+          {notes.length !== 5 && topics.length > 0 ? (
+            <NoteEditor onSave={createNote} />
+          ) : (
+            <Image
+              src={NoteTakerFallback}
+              alt="notetaker-fallback"
+              className=" max-w-full rounded-lg shadow-none transition-shadow duration-300 ease-in-out hover:shadow-lg hover:shadow-black/30"
+            />
+          )}
         </>
       </Content>
     </MainContainer>

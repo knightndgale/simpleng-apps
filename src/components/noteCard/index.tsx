@@ -16,20 +16,27 @@ const NoteCard = ({ note, onDelete }: { note: Note; onDelete: () => void }) => {
           className={`collapse-arrow ${
             isExpanded ? "collapse-open" : ""
           } collapse`}
-          onClick={() => setIsExpanded(!isExpanded)}
         >
-          <div className="collapse-title text-xl font-bold">{note.title}</div>
+          <h4
+            className="collapse-title text-xl font-bold hover:cursor-pointer"
+            onClick={() => setIsExpanded(!isExpanded)}
+          >
+            {note.title}
+          </h4>
           <div className="collapse-content">
             <article className="prose lg:prose-xl">
               <ReactMarkdown>{note.content}</ReactMarkdown>
             </article>
           </div>
         </div>
-        <div className="card-actions mx-2 flex justify-end">
-          <button className="btn-warning btn-xs btn px-5" onClick={onDelete}>
-            Delete
-          </button>
-        </div>
+        {isExpanded && (
+          <div className="card-actions mx-2 flex justify-end">
+            <button className="btn-warning btn-md btn w-40 ">Edit</button>
+            <button className="btn-error btn-md btn w-40 " onClick={onDelete}>
+              Delete
+            </button>
+          </div>
+        )}
       </div>
     </div>
   );
